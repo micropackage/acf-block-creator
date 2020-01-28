@@ -1,0 +1,35 @@
+{
+	"name": "micropackage/acf-block-creator",
+	"version": "1.0.0",
+	"description": "ACF Block Creator - automatic block creation add-on for ACF",
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		{
+			"name": "Jakub Mikita",
+			"email": "jakub@bracketspace.com"
+		},
+    {
+      "name": "Wojtek Szałkiewicz",
+      "email": "wojtek@szalkiewicz.pl"
+    }
+	],
+	"scripts": {
+		"phpcs": "phpcs",
+		"phpcbf": "phpcbf"
+	},
+	"require": {
+		"php": ">=5.6",
+		"micropackage/singleton": "^1.1",
+		"micropackage/dochooks": "^1.0"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+		"phpcompatibility/php-compatibility": "^9.1",
+		"wp-coding-standards/wpcs": "^2.0"
+	},
+	"autoload": {
+		"psr-4" : {
+			"Micropackage\\ACFBlockCreator\\" : "src"
+		}
+	}
+}
