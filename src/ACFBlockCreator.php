@@ -232,7 +232,7 @@ class ACFBlockCreator extends Singleton {
 			$template
 		);
 
-		$this->theme_fs->put_contents( "{$slug}.php", $template );
+		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", $template );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
