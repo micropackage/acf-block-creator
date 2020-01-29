@@ -27,6 +27,14 @@
 		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 	</rule>
 
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+    <exclude-pattern>/src/fields/*</exclude-pattern>
+	</rule>
+
+	<rule ref="PSR2.Files.ClosingTag.NotAllowed">
+    <exclude-pattern>/src/fields/*</exclude-pattern>
+	</rule>
+
 	<!-- PHPCompatibility -->
 	<rule ref="PHPCompatibility" />
 	<config name="testVersion" value="5.6-" />
@@ -40,4 +48,5 @@
 
 	<exclude-pattern>tests/*</exclude-pattern>
 	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>src/block.php</exclude-pattern>
 </ruleset>
