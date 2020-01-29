@@ -1,4 +1,4 @@
-# DocHooks
+# ACF Block Creator
 
 [![BracketSpace Micropackage](https://img.shields.io/badge/BracketSpace-Micropackage-brightgreen)](https://bracketspace.com)
 [![Latest Stable Version](https://poser.pugx.org/micropackage/acf-block-creator/v/stable)](https://packagist.org/packages/micropackage/acf-block-creator)
@@ -9,45 +9,9 @@
 ## 🧬 About ACF Block Creator
 
 This package simplifies block creation for Gutengberg editor in WordPress using Advanced Custom Fields plugin.
+It extends functonality of [Block Loader](https://github.com/micropackage/block-loader) package and is intended to use alongside it.
 
-
-```php
-class Example extends HookAnnotations {
-
-	/**
-	 * @action test
-	 */
-	public function test_action() {}
-
-	/**
-	 * @filter test 5
-	 */
-	public function test_filter( $val, $arg ) {
-		return $val;
-	}
-
-	/**
-	 * @shortcode test
-	 */
-	public function test_shortcode( $atts, $content ) {
-		return 'This is test';
-	}
-
-}
-
-$example = new Example();
-$example->add_hooks();
-```
-
-Instead of old:
-
-```php
-$example = new Example();
-
-add_action( 'test', [ $example, 'test_action' ] );
-add_filter( 'test', [ $example, 'test_filter' ], 5, 2 );
-add_shortcode( 'test', [ $example, 'test_shortcode' ] );
-```
+This package will automatically create a block template file with basic markup for ACF fields while creating a field group for a block.
 
 ## 💾 Installation
 
@@ -57,66 +21,78 @@ composer require micropackage/acf-block-creator
 
 ## 🕹 Usage
 
-### Annotations
-
-```
-@action <hook_name*> <priority>
-@filter <hook_name*> <priority>
-@shortcode <shortcode_name*>
-```
-
-The hook and shortcode name is required while default priority is `10`.
-
-You don't provide the argument count, the class will figure it out. Just use the callback params you want.
-
-### Test if DocHooks are working
-
-When OPCache has the `save_comments` and `load_comments` disabled, this package won't work, because the comments are stripped down. [See the fallback solution](#fallback).
-
+Before you can start creating blocks this package needs to be initialized:
 ```php
-use Micropackage\DocHooks\Helper;
-
-(bool) Helper::is_enabled();
+Micropackage\ACFBlockCreator\ACFBlockCreator::init( [
+	'blocks_dir'            => 'blocks',
+	'scss_dir'              => false,
+	'default_category'      => 'common',
+	'block_container_class' => 'block-inner',
+	'package'               => true,
+	'license'               => 'GPL-3.0-or-later',
+] );
 ```
 
-### Using within the class
+Only thing to do is to create new ACF field group which name starts with "Block:". It will automatically create a block template file and set the field group location to this created block.
+Block params (block name, slug, category etc.) can be adjusted using additional fields at the bottom of field group creation form.
 
-```php
-class Example extends HookAnnotations {
+### Silent initialization
 
-	/**
-	 * @action test
-	 */
-	public function test_action() {}
+Since this is a development package and is not useful in production environment we probably don't want it's initialization code in the production package of our theme.
+That's why this package will be automatically initialized by [Block Loader](https://github.com/micropackage/block-loader) if both packages will be present.
 
-}
+So if we will add this as dev dependency and then run `composer install --no-dev` this package will not be present and just won't get loaded by BlockLoader.
 
-$example = new Example();
-$example->add_hooks();
-```
+All configuration params of this package can be then passed directly to `BlockLoader::init` method.
 
-### Using as a standalone object
+Also `blocks_dir` param will not be necessary since it will automatically get the value of `dir` param for BlockLoader.
+If you configure a custom category it will also be automatically used as default category for new blocks.
 
-```php
-use Micropackage\DocHooks\Helper;
+## ⚙️ Configuration
+All parameters are optional.
 
-class Example {
+### blocks_dir
+**string**
 
-	/**
-	 * @action test
-	 */
-	public function test_action() {}
+Directory inside the theme for block templates.
 
-}
+**Default:** `'blocks'`
 
-$example = Helper::hook( new Example() );
-```
+### scss_dir
+**false|string**
 
-### Fallback
+Directory inside the theme for block sass styles file.
+If set, the empty scss file will be created for each block in this directory.
 
-Because the HookAnnotations object stores the called hooks in `_called_doc_hooks` property, you are able to pull them out and parse them into a list of old `add_action`, `add_filter` and `add_shortcode` functions.
+**Default:** `false`
 
-For this you'll need a central "repository" of all objects with hooks ie. Runtime class. [See the example of this approach](https://github.com/BracketSpace/Notification/blob/master/bin/dump-hooks.php) in the Notification plugin, which uses the WP CLI to dump all the hooks into separate file.
+### default_category
+**string**
+
+Default category for new blocks.
+
+**Default:** `'common'`
+
+### block_container_class
+**string**
+
+Optional class for wrapping `<div>` element inside the block template.
+
+**Default:** `'block-inner'`
+
+### package
+**boolean|string**
+
+String containing package name for file block comment. If set to true, WordPress site name will be used. If false, no `@package` comment will be added.
+
+**Default:** `true`
+
+### license
+**false|string**
+
+String containing license name for file block comment. If set to false no `@license` comment will be added.
+
+**Default:** `'GPL-3.0-or-later'`
 
 ## 📦 About the Micropackage project
 

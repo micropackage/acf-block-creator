@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55ca2b05218ae71c5ac321cccc33a9cc",
+    "content-hash": "68ed17752dc5911f14a0d649a49096af",
     "packages": [
         {
             "name": "micropackage/dochooks",
@@ -46,6 +46,48 @@
             ],
             "description": "DocHooks - annotated WordPress hooks",
             "time": "2020-01-28T12:33:02+00:00"
+        },
+        {
+            "name": "micropackage/filesystem",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/micropackage/filesystem.git",
+                "reference": "30317875cfd12750b68858efe93136469a5bc3d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/micropackage/filesystem/zipball/30317875cfd12750b68858efe93136469a5bc3d5",
+                "reference": "30317875cfd12750b68858efe93136469a5bc3d5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+                "phpcompatibility/php-compatibility": "^9.1",
+                "phpunit/phpunit": "^6.5.5",
+                "wp-coding-standards/wpcs": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Micropackage\\Filesystem\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Jakub Mikita",
+                    "email": "jakub@bracketspace.com"
+                }
+            ],
+            "description": "Wrapper for WordPress' Filesystem for easier file manipulations.",
+            "time": "2020-01-28T19:31:53+00:00"
         },
         {
             "name": "micropackage/singleton",

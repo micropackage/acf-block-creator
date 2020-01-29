@@ -3,13 +3,12 @@
  * ACF Block Creator
  *
  * @package micropackage/acf-block-creator
- *
- * phpcs:disable WordPress.WP.AlternativeFunctions
  */
 
 namespace Micropackage\ACFBlockCreator;
 
 use Micropackage\DocHooks\Helper;
+use Micropackage\Filesystem\Filesystem;
 use Micropackage\Singleton\Singleton;
 
 /**
@@ -50,6 +49,9 @@ class ACFBlockCreator extends Singleton {
 			'license'               => 'GPL-3.0-or-later',
 		] );
 
+		$this->package_fs = new Filesystem( __DIR__ );
+		$this->theme_fs   = new Filesystem( get_stylesheet_directory() );
+
 		Helper::hook( $this );
 	}
 
@@ -68,6 +70,9 @@ class ACFBlockCreator extends Singleton {
 		if ( isset( $field_group['create_gutenberg_block'] ) && $field_group['create_gutenberg_block'] ) {
 			return;
 		}
+
+		$default_category = apply_filters( 'micropackage/acf-block-creator/block-category', $this->config['default_category'] );
+		$container_class  = apply_filters( 'micropackage/acf-block-creator/block-container-class', $this->config['block_container_class'] );
 
 		acf_render_field_wrap( [
 			'label'        => 'Create Gutenberg block',
@@ -96,8 +101,6 @@ class ACFBlockCreator extends Singleton {
 			'prefix'       => 'acf_field_group',
 			'value'        => isset( $field_group['block_slug'] ) ? $field_group['block_slug'] : '',
 		] );
-
-		$default_category = apply_filters( 'micropackage/acf-block-creator/block-category', $this->config['default_category'] );
 
 		acf_render_field_wrap( [
 			'label'        => 'Block category',
@@ -130,8 +133,6 @@ class ACFBlockCreator extends Singleton {
 			],
 		] );
 
-		$container_class = apply_filters( 'micropackage/acf-block-creator/block-container-class', $this->config['block_container_class'] );
-
 		acf_render_field_wrap( [
 			'label'        => 'Block container class',
 			'instructions' => '',
@@ -156,20 +157,12 @@ class ACFBlockCreator extends Singleton {
 			return;
 		}
 
-		$blocks_dir = get_stylesheet_directory() . '/' . trim( $this->config['blocks_dir'], '/' );
-
-		if ( ! $this->dir_exists( $blocks_dir ) ) {
+		if ( ! $this->maybe_mkdir( $this->config['blocks_dir'] ) ) {
 			return;
 		}
 
 		// Populate fields.
 		$field_group['fields'] = acf_get_fields( $field_group );
-
-		$name       = $field_group['block_name'];
-		$slug       = $field_group['block_slug'];
-		$category   = $field_group['block_category'];
-		$align      = $field_group['block_align'];
-		$textdomain = wp_get_theme()->get( 'TextDomain' );
 
 		// Group location.
 		$field_group['location'] = [
@@ -182,8 +175,10 @@ class ACFBlockCreator extends Singleton {
 			],
 		];
 
+		$slug    = $field_group['block_slug'];
 		$comment = [];
 
+		// Add @package comment.
 		if ( $this->config['package'] ) {
 			$package = $this->config['package'];
 
@@ -194,25 +189,25 @@ class ACFBlockCreator extends Singleton {
 			$comment[] = " * @package {$package}";
 		}
 
+		// Add @license comment.
 		if ( is_string( $this->config['license'] ) ) {
 			$comment[] = " * @license {$this->config['license']}";
 		}
 
+		// Add empty line after package/license.
 		if ( $comment ) {
 			$comment[] = ' *';
 		}
 
-		$block_config = [
-			'Block Name' => $name,
-			'Category'   => $category,
-			'Align'      => $align,
+		$block_params = [
+			'Block Name' => $field_group['block_name'],
+			'Category'   => $field_group['block_category'],
+			'Align'      => $field_group['block_align'],
 		];
 
-		foreach ( $block_config as $key => $value ) {
+		foreach ( $block_params as $key => $value ) {
 			$comment[] = " * {$key}: $value";
 		}
-
-		$comment = substr( implode( "\n", $comment ), 3 );
 
 		// Create block template file.
 		$fields_markup = [];
@@ -222,7 +217,7 @@ class ACFBlockCreator extends Singleton {
 
 		$class = $field_group['block_container_class'] ? " class=\"{$field_group['block_container_class']}\"" : null;
 
-		$template = file_get_contents( dirname( __FILE__ ) . '/block.php' );
+		$template = $this->package_fs->get_contents( 'block.php' );
 		$template = str_replace(
 			[
 				'{COMMENT}',
@@ -230,22 +225,21 @@ class ACFBlockCreator extends Singleton {
 				'{CLASS}',
 			],
 			[
-				$comment,
+				substr( implode( "\n", $comment ), 3 ),
 				implode( "\n", $fields_markup ),
 				$class,
 			],
 			$template
 		);
 
-		file_put_contents( $blocks_dir . "/{$slug}.php", $template );
+		$this->theme_fs->put_contents( "{$slug}.php", $template );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
-			$scss_dir = get_stylesheet_directory() . '/' . trim( $this->config['scss_dir'], '/' );
-			$scss     = ".block.$slug {\n\n}";
+			$scss = ".block.$slug {\n\n}";
 
-			if ( $this->dir_exists( $scss_dir ) ) {
-				file_put_contents( $scss_dir . "/_$slug.scss", $scss );
+			if ( $this->maybe_mkdir( $this->config['scss_dir'] ) ) {
+				$this->theme_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
 			}
 		}
 
@@ -298,20 +292,18 @@ class ACFBlockCreator extends Singleton {
 	}
 
 	/**
-	 * Enqueues admin scripts
+	 * Checks if directory exists and tries to create it if not
 	 *
 	 * @since  1.0.0
-	 * @param  string $dir Full dir path.
+	 * @param  string $dir Directory co check.
 	 * @return bool
 	 */
-	private function dir_exists( $dir ) {
-		$exists = is_dir( $dir );
-
-		if ( ! $exists ) {
-			$exists = wp_mkdir_p( $dir );
+	private function maybe_mkdir( $dir ) {
+		if ( ! $this->theme_fs->exists( $dir ) ) {
+			return $this->theme_fs->mkdir( $dir, false, false, false, true );
 		}
 
-		return $exists;
+		return true;
 	}
 
 	/**
@@ -322,15 +314,10 @@ class ACFBlockCreator extends Singleton {
 	 * @return string
 	 */
 	private function get_field_markup( $field ) {
-		$markup_file = dirname( __FILE__ ) . '/fields/' . $field['type'] . '.php';
-
-		if ( file_exists( $markup_file ) ) {
-			$markup = file_get_contents( $markup_file );
-		} else {
-			$markup = file_get_contents( dirname( __FILE__ ) . '/fields/default.php' );
-		}
-
-		$subfields = [];
+		$markup_file = "fields/{$field['type']}.php";
+		$markup_file = $this->package_fs->exists( $markup_file ) ? $markup_file : 'fields/default.php';
+		$markup      = $this->package_fs->get_contents( $markup_file );
+		$subfields   = [];
 
 		if ( 'repeater' === $field['type'] ) {
 			foreach ( $field['sub_fields'] as $sub_field ) {
