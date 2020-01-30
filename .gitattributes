@@ -1,8 +1,8 @@
 * text eol=lf
-*.gif binary
-*.ico binary
-*.jpg binary
-*.pdf binary
-*.png binary
-*.psd binary
-*.webp binary
+*.gif -text
+*.ico -text
+*.jpg -text
+*.pdf -text
+*.png -text
+*.psd -text
+*.webp -text

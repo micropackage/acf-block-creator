@@ -37,7 +37,7 @@ Only thing to do is to create new ACF field group which name starts with "Block:
 
 Block params (block name, slug, category etc.) can be adjusted using additional fields at the bottom of field group creation form.
 
-![ACF Block Creator demo](./.github/assets/demo.gif?raw=true)
+![ACF Block Creator demo](./.github/assets/usage-demo.gif?raw=true)
 
 ### Silent initialization
 
