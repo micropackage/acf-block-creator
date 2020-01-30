@@ -16,7 +16,7 @@ This package will automatically create a block template file with basic markup f
 ## 💾 Installation
 
 ``` bash
-composer require micropackage/acf-block-creator
+composer require --dev micropackage/acf-block-creator
 ```
 
 ## 🕹 Usage
@@ -34,7 +34,10 @@ Micropackage\ACFBlockCreator\ACFBlockCreator::init( [
 ```
 
 Only thing to do is to create new ACF field group which name starts with "Block:". It will automatically create a block template file and set the field group location to this created block.
+
 Block params (block name, slug, category etc.) can be adjusted using additional fields at the bottom of field group creation form.
+
+![ACF Block Creator demo](./.github/assets/usage-demo.gif?raw=true)
 
 ### Silent initialization
 
@@ -51,48 +54,16 @@ If you configure a custom category it will also be automatically used as default
 ## ⚙️ Configuration
 All parameters are optional.
 
-### blocks_dir
-**string**
+| Parameter                 | Type              | Description                                                  |
+| ------------------------- | ----------------- | ------------------------------------------------------------ |
+| **blocks_dir**            | (*string*)        | Directory inside the theme for block templates.<br />**Default:** `'blocks'` |
+| **scss_dir**              | (*false\|string*) | Directory inside the theme for block sass styles file.<br/>If set, the empty scss file will be created for each block in this directory.<br/>**Default:** `false` |
+| **default_category**      | (*string*)        | Default category for new blocks.<br/>**Default:** `'common'` |
+| **block_container_class** | (*string*)        | Optional class for wrapping `<div>` element inside the block template.<br/>**Default:** `'block-inner'` |
+| **package**               | (*bool\|string*)  | String containing package name for file block comment. If set to true, WordPress site name will be used. If false, no `@package` comment will be added.<br/>**Default:** `true` |
+| **license**               | (*false\|string*) | String containing license name for file block comment. If set to false no `@license` comment will be added.<br/>**Default:** `'GPL-3.0-or-later'` |
 
-Directory inside the theme for block templates.
 
-**Default:** `'blocks'`
-
-### scss_dir
-**false|string**
-
-Directory inside the theme for block sass styles file.
-If set, the empty scss file will be created for each block in this directory.
-
-**Default:** `false`
-
-### default_category
-**string**
-
-Default category for new blocks.
-
-**Default:** `'common'`
-
-### block_container_class
-**string**
-
-Optional class for wrapping `<div>` element inside the block template.
-
-**Default:** `'block-inner'`
-
-### package
-**boolean|string**
-
-String containing package name for file block comment. If set to true, WordPress site name will be used. If false, no `@package` comment will be added.
-
-**Default:** `true`
-
-### license
-**false|string**
-
-String containing license name for file block comment. If set to false no `@license` comment will be added.
-
-**Default:** `'GPL-3.0-or-later'`
 
 ## 📦 About the Micropackage project
 

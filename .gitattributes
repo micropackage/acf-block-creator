@@ -1,1 +1,8 @@
 * text eol=lf
+*.gif -text
+*.ico -text
+*.jpg -text
+*.pdf -text
+*.png -text
+*.psd -text
+*.webp -text
