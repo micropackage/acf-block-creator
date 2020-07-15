@@ -236,7 +236,7 @@ class ACFBlockCreator extends Singleton {
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
-			$scss = ".block.$slug {\n\n}";
+			$scss = ".block.$slug {\n/* stylelint-disable */\n}";
 
 			if ( $this->maybe_mkdir( $this->config['scss_dir'] ) ) {
 				$this->theme_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
