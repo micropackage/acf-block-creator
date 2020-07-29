@@ -1,9 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Next] - [Date]
+
+* [Added] InnerBlocks support.
+
 ## [1.0.1] - 15.07.2020
 
-[Added] stylelint-disable comment in scss file
+* [Added] stylelint-disable comment in scss file.
 
 ## [1.0.0] - 27.01.2020
 
