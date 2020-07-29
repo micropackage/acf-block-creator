@@ -141,6 +141,17 @@ class ACFBlockCreator extends Singleton {
 			'prefix'       => 'acf_field_group',
 			'value'        => isset( $field_group['block_container_class'] ) ? $field_group['block_container_class'] : $container_class,
 		] );
+
+		acf_render_field_wrap( [
+			'label'        => 'Use Inner Blocks',
+			'instructions' => 'Will add InnerBlocks element to the template',
+			'type'         => 'true_false',
+			'name'         => 'inner_blocks',
+			'prefix'       => 'acf_field_group',
+			'value'        => false,
+			'ui'           => true,
+		] );
+
 	}
 
 	/**
@@ -213,6 +224,11 @@ class ACFBlockCreator extends Singleton {
 		$fields_markup = [];
 		foreach ( $field_group['fields'] as $field ) {
 			$fields_markup[] = $this->get_field_markup( $field );
+		}
+
+		// Add inner blocks tag.
+		if ( $field_group['inner_blocks'] ) {
+			$fields_markup[] = '<InnerBlocks />';
 		}
 
 		$class = $field_group['block_container_class'] ? " class=\"{$field_group['block_container_class']}\"" : null;
