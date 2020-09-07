@@ -42,6 +42,20 @@ class ACFBlockCreator extends Singleton {
 	private $excluded_field_types = [ 'message', 'accordion', 'tab' ];
 
 	/**
+	 * Indentation character
+	 *
+	 * @var string
+	 */
+	private $indentation_char = "\t";
+
+	/**
+	 * Indentation count
+	 *
+	 * @var int
+	 */
+	private $indentation = 1;
+
+	/**
 	 * Constructor
 	 *
 	 * @param array $config Config array.
@@ -256,7 +270,7 @@ class ACFBlockCreator extends Singleton {
 			$template
 		);
 
-		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", rtrim( $template ) );
+		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template ) );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
@@ -348,6 +362,8 @@ class ACFBlockCreator extends Singleton {
 		$subfields   = [];
 
 		if ( 'repeater' === $field['type'] ) {
+			$this->indentation++;
+
 			foreach ( $field['sub_fields'] as $sub_field ) {
 				$subfields[] = str_replace(
 					[
@@ -361,20 +377,34 @@ class ACFBlockCreator extends Singleton {
 					$this->get_field_markup( $sub_field )
 				);
 			}
+
+			$this->indentation--;
 		}
 
 		$markup = str_replace(
 			[
 				'{name}',
 				'{subfields}',
+				"\n",
 			],
 			[
 				$field['name'],
 				implode( "\n", $subfields ),
+				"\n" . $this->indentation(),
 			],
 			$markup
 		);
 
-		return $markup;
+		return $this->indentation() . $markup;
+	}
+
+	/**
+	 * Gets current indentation
+	 *
+	 * @since  1.0.3
+	 * @return string
+	 */
+	private function indentation() {
+		return str_repeat( $this->indentation_char, $this->indentation );
 	}
 }

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 * [Fixed] ACF 5.9 compatibility.
 * [Fixed] Block creation when using layout fields like Message or Tabs.
 * [Changed] Block template.
+* [Added] Support for line indentation.
 
 ## 1.0.2
 
