@@ -35,6 +35,13 @@ class ACFBlockCreator extends Singleton {
 	private $config;
 
 	/**
+	 * Field types excluded from markup generation
+	 *
+	 * @var array
+	 */
+	private $excluded_field_types = [ 'message', 'accordion', 'tab' ];
+
+	/**
 	 * Constructor
 	 *
 	 * @param array $config Config array.
@@ -226,29 +233,30 @@ class ACFBlockCreator extends Singleton {
 			$fields_markup[] = $this->get_field_markup( $field );
 		}
 
+		// Remove empty markup.
+		$fields_markup = array_filter( $fields_markup );
+
 		// Add inner blocks tag.
 		if ( $field_group['inner_blocks'] ) {
 			$fields_markup[] = '<InnerBlocks />';
 		}
-
-		$class = $field_group['block_container_class'] ? " class=\"{$field_group['block_container_class']}\"" : null;
 
 		$template = $this->package_fs->get_contents( 'block.php' );
 		$template = str_replace(
 			[
 				'{COMMENT}',
 				'{FIELDS}',
-				'{CLASS}',
+				'{CSS_CLASS}',
 			],
 			[
 				substr( implode( "\n", $comment ), 3 ),
 				implode( "\n", $fields_markup ),
-				$class,
+				$field_group['block_container_class'],
 			],
 			$template
 		);
 
-		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", $template );
+		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", rtrim( $template ) );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
@@ -330,6 +338,10 @@ class ACFBlockCreator extends Singleton {
 	 * @return string
 	 */
 	private function get_field_markup( $field ) {
+		if ( in_array( $field['type'], $this->excluded_field_types, true ) ) {
+			return '';
+		}
+
 		$markup_file = "fields/{$field['type']}.php";
 		$markup_file = $this->package_fs->exists( $markup_file ) ? $markup_file : 'fields/default.php';
 		$markup      = $this->package_fs->get_contents( $markup_file );

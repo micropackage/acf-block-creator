@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 * [Fixed] jQuery compatibility in WordPress 5.5.
 * [Fixed] ACF 5.9 compatibility.
+* [Fixed] Block creation when using layout fields like Message or Tabs.
+* [Changed] Block template.
 
 ## 1.0.2
 
