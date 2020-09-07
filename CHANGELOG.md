@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Next]
+
+* [Fixed] jQuery compatibility in WordPress 5.5.
+
 ## 1.0.2
 
 * [Added] InnerBlocks support.
