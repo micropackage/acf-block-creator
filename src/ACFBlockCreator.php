@@ -35,6 +35,27 @@ class ACFBlockCreator extends Singleton {
 	private $config;
 
 	/**
+	 * Field types excluded from markup generation
+	 *
+	 * @var array
+	 */
+	private $excluded_field_types = [ 'message', 'accordion', 'tab' ];
+
+	/**
+	 * Indentation character
+	 *
+	 * @var string
+	 */
+	private $indentation_char = "\t";
+
+	/**
+	 * Indentation count
+	 *
+	 * @var int
+	 */
+	private $indentation = 1;
+
+	/**
 	 * Constructor
 	 *
 	 * @param array $config Config array.
@@ -141,12 +162,23 @@ class ACFBlockCreator extends Singleton {
 			'prefix'       => 'acf_field_group',
 			'value'        => isset( $field_group['block_container_class'] ) ? $field_group['block_container_class'] : $container_class,
 		] );
+
+		acf_render_field_wrap( [
+			'label'        => 'Use Inner Blocks',
+			'instructions' => 'Will add InnerBlocks element to the template',
+			'type'         => 'true_false',
+			'name'         => 'inner_blocks',
+			'prefix'       => 'acf_field_group',
+			'value'        => false,
+			'ui'           => false,
+		] );
+
 	}
 
 	/**
 	 * Initiates Block Loader
 	 *
-	 * @action acf/update_field_group 5
+	 * @action acf/update_field_group 15
 	 *
 	 * @since  1.0.0
 	 * @param  array $field_group Field group params.
@@ -215,28 +247,34 @@ class ACFBlockCreator extends Singleton {
 			$fields_markup[] = $this->get_field_markup( $field );
 		}
 
-		$class = $field_group['block_container_class'] ? " class=\"{$field_group['block_container_class']}\"" : null;
+		// Remove empty markup.
+		$fields_markup = array_filter( $fields_markup );
+
+		// Add inner blocks tag.
+		if ( $field_group['inner_blocks'] ) {
+			$fields_markup[] = '<InnerBlocks />';
+		}
 
 		$template = $this->package_fs->get_contents( 'block.php' );
 		$template = str_replace(
 			[
 				'{COMMENT}',
 				'{FIELDS}',
-				'{CLASS}',
+				'{CSS_CLASS}',
 			],
 			[
 				substr( implode( "\n", $comment ), 3 ),
 				implode( "\n", $fields_markup ),
-				$class,
+				$field_group['block_container_class'],
 			],
 			$template
 		);
 
-		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", $template );
+		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template ) );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
-			$scss = ".block.$slug {\n\n}";
+			$scss = ".block.$slug {\n/* stylelint-disable */\n}";
 
 			if ( $this->maybe_mkdir( $this->config['scss_dir'] ) ) {
 				$this->theme_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
@@ -314,12 +352,18 @@ class ACFBlockCreator extends Singleton {
 	 * @return string
 	 */
 	private function get_field_markup( $field ) {
+		if ( in_array( $field['type'], $this->excluded_field_types, true ) ) {
+			return '';
+		}
+
 		$markup_file = "fields/{$field['type']}.php";
 		$markup_file = $this->package_fs->exists( $markup_file ) ? $markup_file : 'fields/default.php';
 		$markup      = $this->package_fs->get_contents( $markup_file );
 		$subfields   = [];
 
 		if ( 'repeater' === $field['type'] ) {
+			$this->indentation++;
+
 			foreach ( $field['sub_fields'] as $sub_field ) {
 				$subfields[] = str_replace(
 					[
@@ -333,20 +377,34 @@ class ACFBlockCreator extends Singleton {
 					$this->get_field_markup( $sub_field )
 				);
 			}
+
+			$this->indentation--;
 		}
 
 		$markup = str_replace(
 			[
 				'{name}',
 				'{subfields}',
+				"\n",
 			],
 			[
 				$field['name'],
 				implode( "\n", $subfields ),
+				"\n" . $this->indentation(),
 			],
 			$markup
 		);
 
-		return $markup;
+		return $this->indentation() . $markup;
+	}
+
+	/**
+	 * Gets current indentation
+	 *
+	 * @since  1.0.3
+	 * @return string
+	 */
+	private function indentation() {
+		return str_repeat( $this->indentation_char, $this->indentation );
 	}
 }

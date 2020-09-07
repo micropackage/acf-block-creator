@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 27.01.2020
+## 1.0.3
+
+* [Fixed] jQuery compatibility in WordPress 5.5.
+* [Fixed] ACF 5.9 compatibility.
+* [Fixed] Block creation when using layout fields like Message or Tabs.
+* [Changed] Block template.
+* [Added] Support for line indentation.
+
+## 1.0.2
+
+* [Added] InnerBlocks support.
+
+## 1.0.1
+
+* [Added] stylelint-disable comment in scss file.
+
+## 1.0.0
 
 Initial release

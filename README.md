@@ -6,6 +6,10 @@
 [![Total Downloads](https://poser.pugx.org/micropackage/acf-block-creator/downloads)](https://packagist.org/packages/micropackage/acf-block-creator)
 [![License](https://poser.pugx.org/micropackage/acf-block-creator/license)](https://packagist.org/packages/micropackage/acf-block-creator)
 
+<p align="center">
+    <img src="https://bracketspace.com/extras/micropackage/micropackage-small.png" alt="Micropackage logo"/>
+</p>
+
 ## 🧬 About ACF Block Creator
 
 This package simplifies block creation for Gutengberg editor in WordPress using Advanced Custom Fields plugin.
