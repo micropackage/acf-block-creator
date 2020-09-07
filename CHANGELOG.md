@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Next]
+## 1.0.3
 
 * [Fixed] jQuery compatibility in WordPress 5.5.
 * [Fixed] ACF 5.9 compatibility.
