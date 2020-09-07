@@ -149,7 +149,7 @@ class ACFBlockCreator extends Singleton {
 			'name'         => 'inner_blocks',
 			'prefix'       => 'acf_field_group',
 			'value'        => false,
-			'ui'           => true,
+			'ui'           => false,
 		] );
 
 	}
@@ -157,7 +157,7 @@ class ACFBlockCreator extends Singleton {
 	/**
 	 * Initiates Block Loader
 	 *
-	 * @action acf/update_field_group 5
+	 * @action acf/update_field_group 15
 	 *
 	 * @since  1.0.0
 	 * @param  array $field_group Field group params.
