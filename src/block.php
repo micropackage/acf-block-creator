@@ -7,7 +7,7 @@
 
 ?>
 
-<div{CLASS}>
+<div class="{CSS_CLASS}">
 
 {FIELDS}
 

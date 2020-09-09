@@ -1,6 +1,6 @@
 ( function( $ ) {
 
-	var $block_option_fields = $( '#acf-field-group-options .acf-fields' ).find( '[data-name="block_name"], [data-name="block_slug"], [data-name="block_category"], [data-name="block_align"], [data-name="block_container_class"]' );
+	var $block_option_fields = $( '#acf-field-group-options .acf-fields' ).find( '[data-name="block_name"], [data-name="block_slug"], [data-name="block_category"], [data-name="block_align"], [data-name="block_container_class"], [data-name="inner_blocks"]' );
 
 	$block_option_fields.hide();
 
@@ -14,7 +14,7 @@
 		}
 	} );
 
-	$( '#acf_field_group-create_gutenberg_block' ).click( function() {
+	$( '#acf_field_group-create_gutenberg_block' ).change( function() {
 		if ( this.checked ) {
 			$block_option_fields.show();
 		} else {

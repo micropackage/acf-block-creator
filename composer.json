@@ -1,6 +1,6 @@
 {
 	"name": "micropackage/acf-block-creator",
-	"version": "1.0.1",
+	"version": "1.0.3",
 	"description": "ACF Block Creator - automatic block creation add-on for ACF",
 	"license": "GPL-3.0-or-later",
 	"authors": [
