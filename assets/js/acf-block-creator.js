@@ -8,14 +8,14 @@
 		var title = $( this ).val();
 		if ( 0 === title.indexOf( 'Block:' ) ) {
 			$( '#acf_field_group-block_name' ).val( title.replace( 'Block: ', '' ) ).trigger( 'change' );
-			if ( ! $( '#acf_field_group-create_gutenberg_block' ).attr( 'checked' ) ) {
+			if ( ! $( '#acf_field_group-create_gutenberg_block' ).prop( 'checked' ) ) {
 				$( '#acf_field_group-create_gutenberg_block' ).trigger( 'click' );
 			}
 		}
 	} );
 
 	$( '#acf_field_group-create_gutenberg_block' ).click( function() {
-		if ( $( this ).attr( 'checked' ) ) {
+		if ( this.checked ) {
 			$block_option_fields.show();
 		} else {
 			$block_option_fields.hide();

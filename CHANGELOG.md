@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [next]
 
+[Fixed] block setup fields behavior
 [Added] filters for config and save directory
 
 ## [1.0.1] - 15.07.2020
