@@ -40,17 +40,23 @@ class ACFBlockCreator extends Singleton {
 	 * @param array $config Config array.
 	 */
 	protected function __construct( $config ) {
-		$this->config = wp_parse_args( $config, [
-			'blocks_dir'            => 'blocks',
-			'scss_dir'              => false,
-			'default_category'      => 'common',
-			'block_container_class' => 'block-inner',
-			'package'               => true,
-			'license'               => 'GPL-3.0-or-later',
-		] );
+		$this->config = apply_filters(
+			'micropackage/acf-block-loader/config',
+			wp_parse_args( $config, [
+				'blocks_dir'            => 'blocks',
+				'scss_dir'              => false,
+				'default_category'      => 'common',
+				'block_container_class' => 'block-inner',
+				'package'               => true,
+				'license'               => 'GPL-3.0-or-later',
+				'root_dir'              => get_stylesheet_directory(),
+			] )
+		);
+
+		$root_dir = apply_filters( 'micropackage/acf-block-creator/root-dir', $this->config['root_dir'] );
 
 		$this->package_fs = new Filesystem( __DIR__ );
-		$this->theme_fs   = new Filesystem( get_stylesheet_directory() );
+		$this->root_fs    = new Filesystem( $root_dir );
 
 		Helper::hook( $this );
 	}
@@ -232,14 +238,14 @@ class ACFBlockCreator extends Singleton {
 			$template
 		);
 
-		$this->theme_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", $template );
+		$this->root_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", $template );
 
 		// Create block scss partial.
 		if ( is_string( $this->config['scss_dir'] ) ) {
 			$scss = ".block.$slug {\n/* stylelint-disable */\n}";
 
 			if ( $this->maybe_mkdir( $this->config['scss_dir'] ) ) {
-				$this->theme_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
+				$this->root_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
 			}
 		}
 
@@ -299,8 +305,8 @@ class ACFBlockCreator extends Singleton {
 	 * @return bool
 	 */
 	private function maybe_mkdir( $dir ) {
-		if ( ! $this->theme_fs->exists( $dir ) ) {
-			return $this->theme_fs->mkdir( $dir, false, false, false, true );
+		if ( ! $this->root_fs->exists( $dir ) ) {
+			return $this->root_fs->mkdir( $dir, false, false, false, true );
 		}
 
 		return true;

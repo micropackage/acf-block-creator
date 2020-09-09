@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [next]
+
+[Added] filters for config and save directory
+
 ## [1.0.1] - 15.07.2020
 
 [Added] stylelint-disable comment in scss file
