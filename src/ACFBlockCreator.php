@@ -62,7 +62,7 @@ class ACFBlockCreator extends Singleton {
 	 */
 	protected function __construct( $config ) {
 		$this->config = apply_filters(
-			'micropackage/acf-block-loader/config',
+			'micropackage/acf-block-creator/config',
 			wp_parse_args( $config, [
 				'blocks_dir'            => 'blocks',
 				'scss_dir'              => false,

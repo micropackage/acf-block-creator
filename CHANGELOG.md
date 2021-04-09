@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## 1.0.4
 
+* [Fixed] invalid hookname
 * [Fixed] block setup fields behavior
 * [Added] filters for config and save directory
 
