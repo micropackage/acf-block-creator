@@ -62,7 +62,7 @@ class ACFBlockCreator extends Singleton {
 	 */
 	protected function __construct( $config ) {
 		$this->config = apply_filters(
-			'micropackage/acf-block-loader/config',
+			'micropackage/acf-block-creator/config',
 			wp_parse_args( $config, [
 				'blocks_dir'            => 'blocks',
 				'scss_dir'              => false,
@@ -276,14 +276,45 @@ class ACFBlockCreator extends Singleton {
 			$template
 		);
 
-		$this->root_fs->put_contents( "{$this->config['blocks_dir']}/{$slug}.php", preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template ) );
+		$template_dir = apply_filters(
+			'micropackage/acf-block-creator/block-template-dir',
+			$this->config['blocks_dir'],
+			$slug
+		);
+
+		$template_file = apply_filters(
+			'micropackage/acf-block-creator/block-template-file',
+			"{$slug}.php",
+			$slug
+		);
+
+		if ( ! $this->maybe_mkdir( $template_dir ) ) {
+			return;
+		}
+
+		$this->root_fs->put_contents(
+			"{$template_dir}/{$template_file}",
+			preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template )
+		);
+
+		$scss_dir = apply_filters(
+			'micropackage/acf-block-creator/block-style-dir',
+			$this->config['scss_dir'],
+			$slug
+		);
 
 		// Create block scss partial.
-		if ( is_string( $this->config['scss_dir'] ) ) {
+		if ( is_string( $scss_dir ) ) {
+			$scss_file = apply_filters(
+				'micropackage/acf-block-creator/block-style-file',
+				"_{$slug}.scss",
+				$slug
+			);
+
 			$scss = ".block.$slug {\n/* stylelint-disable */\n}";
 
-			if ( $this->maybe_mkdir( $this->config['scss_dir'] ) ) {
-				$this->root_fs->put_contents( "{$this->config['scss_dir']}/_{$slug}.scss", $scss );
+			if ( $this->maybe_mkdir( $scss_dir ) ) {
+				$this->root_fs->put_contents( "{$scss_dir}/{$scss_file}", $scss );
 			}
 		}
 
