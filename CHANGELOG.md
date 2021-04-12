@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Next]
+## 1.0.5
 
 * [Fixed] Invalid `micropackage/acf-block-creator/config` hookname
 * [Added] Filters for block tamplate and style file paths
