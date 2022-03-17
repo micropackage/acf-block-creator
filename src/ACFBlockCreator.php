@@ -261,7 +261,12 @@ class ACFBlockCreator extends Singleton {
 			$fields_markup[] = '<InnerBlocks />';
 		}
 
-		$template = $this->package_fs->get_contents( 'block.php' );
+		$template = apply_filters(
+			'micropackage/acf-block-creator/block/template',
+			$this->package_fs->get_contents( 'block.php' ),
+			$field_group
+		);
+
 		$template = str_replace(
 			[
 				'{COMMENT}',
@@ -292,9 +297,15 @@ class ACFBlockCreator extends Singleton {
 			return;
 		}
 
+		$markup = apply_filters(
+			'micropackage/acf-block-creator/block/markup',
+			preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template ),
+			$field_group
+		);
+
 		$this->root_fs->put_contents(
 			"{$template_dir}/{$template_file}",
-			preg_replace( '/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/', "\n\n", $template )
+			$markup
 		);
 
 		$scss_dir = apply_filters(
