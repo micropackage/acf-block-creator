@@ -35,6 +35,20 @@ class ACFBlockCreator extends Singleton {
 	private $config;
 
 	/**
+	 * Package filesystem
+	 *
+	 * @var Filesystem
+	 */
+	private $package_fs;
+
+	/**
+	 * Root filesystem
+	 *
+	 * @var Filesystem
+	 */
+	private $root_fs;
+
+	/**
 	 * Field types excluded from markup generation
 	 *
 	 * @var array
