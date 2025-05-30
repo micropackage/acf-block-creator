@@ -1,6 +1,5 @@
 {
 	"name": "micropackage/acf-block-creator",
-	"version": "1.0.6",
 	"description": "ACF Block Creator - automatic block creation add-on for ACF",
 	"license": "GPL-3.0-or-later",
 	"authors": [
@@ -8,10 +7,10 @@
 			"name": "Jakub Mikita",
 			"email": "jakub@bracketspace.com"
 		},
-    {
-      "name": "Wojtek Szałkiewicz",
-      "email": "wojtek@szalkiewicz.pl"
-    }
+		{
+			"name": "Wojtek Szałkiewicz",
+			"email": "wojtek@szalkiewicz.pl"
+		}
 	],
 	"scripts": {
 		"phpcs": "phpcs",
