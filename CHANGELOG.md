@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.0.7
+
+* [Fixed] Fixed PHP deprecation notices.
+
 ## 1.0.6
 
 * [Added] Filers for block template and final markup.
